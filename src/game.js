@@ -1549,6 +1549,7 @@ class GalaxyDefender {
     this.elements.transitionVideo.pause();
     this.renderLeaderboard();
     this.elements.startBackgroundVideo.play().catch(() => {});
+    this.refreshModelViewers();
   }
 
   openHangar() {
@@ -1558,6 +1559,7 @@ class GalaxyDefender {
     this.elements.rulesModal.classList.add("hidden");
     this.renderLeaderboard();
     this.elements.playerName.focus();
+    this.refreshModelViewers();
   }
 
   showRules() {
@@ -1623,6 +1625,7 @@ class GalaxyDefender {
     this.state = "playing";
     this.seedDebugBattle();
     this.updateHud();
+    this.refreshModelViewers();
 
     if (mode === "pause") {
       this.pauseGame();
@@ -1642,6 +1645,7 @@ class GalaxyDefender {
       this.elements.finalRounds.textContent = this.formatNumber(25);
       this.elements.gameOverScreen.classList.remove("hidden");
       this.renderLeaderboard();
+      this.refreshModelViewers();
     }
   }
 
@@ -1817,6 +1821,7 @@ class GalaxyDefender {
     this.elements.pauseScore.textContent = this.formatNumber(this.score);
     this.elements.pauseScreen.classList.remove("hidden");
     this.setMobilePauseState("resume");
+    this.refreshModelViewers();
   }
 
   resumeFromPause() {
@@ -2012,6 +2017,7 @@ class GalaxyDefender {
         this.elements.finalRounds.textContent = this.formatNumber(Math.max(this.round - 1, 0));
         this.elements.gameOverScreen.classList.remove("hidden");
         this.renderLeaderboard();
+        this.refreshModelViewers();
       },
     });
   }
@@ -2136,6 +2142,18 @@ class GalaxyDefender {
     if (!this.elements.mobilePause) return;
     this.elements.mobilePause.classList.toggle("is-resume", mode === "resume");
     this.elements.mobilePause.setAttribute("aria-label", mode === "resume" ? "Resume mission" : "Pause mission");
+  }
+
+  refreshModelViewers() {
+    requestAnimationFrame(() => {
+      [
+        this.welcomeHeroViewer,
+        this.welcomeEnemyViewer,
+        this.hangarHeroViewer,
+        this.pauseHeroViewer,
+        this.gameOverHeroViewer,
+      ].forEach((viewer) => viewer?.resize?.());
+    });
   }
 
   async tryLockLandscape() {

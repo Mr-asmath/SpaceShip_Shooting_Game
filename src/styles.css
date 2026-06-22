@@ -281,6 +281,7 @@ canvas {
 .hangar-panel {
   display: grid;
   grid-template-columns: minmax(360px, 490px) minmax(0, 1fr);
+  grid-template-rows: auto auto auto auto minmax(0, 1fr);
   grid-template-areas:
     "title stage"
     "name stage"
@@ -289,11 +290,13 @@ canvas {
     "actions actions";
   gap: 18px 26px;
   align-items: start;
+  align-content: start;
 }
 
 .hangar-panel > .screen-title {
   grid-area: title;
-  align-self: end;
+  align-self: start;
+  margin-top: 20px;
 }
 
 .hangar-name {
@@ -434,7 +437,7 @@ button:hover {
 .hangar-stage {
   grid-area: stage;
   position: relative;
-  min-height: clamp(430px, 64vh, 720px);
+  min-height: calc(100vh - 96px);
   display: grid;
   align-items: center;
   justify-items: center;
@@ -443,9 +446,11 @@ button:hover {
 }
 
 .hangar-model-canvas {
-  width: min(100%, 860px);
-  height: 100%;
-  min-height: 460px;
+  position: absolute;
+  inset: 0 0 90px 0;
+  width: 100%;
+  height: auto;
+  min-height: 0;
   background: transparent;
   cursor: grab;
   touch-action: none;
@@ -488,6 +493,7 @@ button:hover {
   grid-area: controls;
   display: grid;
   gap: 12px;
+  margin-top: 4px;
 }
 
 .control-mode-grid {
@@ -619,6 +625,11 @@ button:hover {
   padding: 18px;
   border: 1px solid rgba(102, 187, 255, 0.28);
   background: linear-gradient(180deg, rgba(11, 20, 44, 0.7), rgba(8, 13, 28, 0.6));
+}
+
+.hangar-panel > .leaderboard-panel {
+  align-self: start;
+  margin-top: 33px;
 }
 
 .leaderboard-list {
