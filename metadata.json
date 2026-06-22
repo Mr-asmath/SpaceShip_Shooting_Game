@@ -1,0 +1,6 @@
+{
+  "name": "Galaxy Defender",
+  "description": "An action-packed 2D Space Shooter game with cosmic animations, Web Audio sound effects, boss battles, power-ups, and a responsive HUD.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

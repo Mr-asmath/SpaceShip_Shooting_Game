@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1920 1080">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#082a42"/>
+      <stop offset="52%" stop-color="#071520"/>
+      <stop offset="100%" stop-color="#01060a"/>
+    </linearGradient>
+    <radialGradient id="nebulaA" cx="26%" cy="36%" r="34%">
+      <stop offset="0%" stop-color="#38ffd4" stop-opacity=".22"/>
+      <stop offset="100%" stop-color="#38ffd4" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="nebulaB" cx="78%" cy="22%" r="28%">
+      <stop offset="0%" stop-color="#4ea8ff" stop-opacity=".2"/>
+      <stop offset="100%" stop-color="#4ea8ff" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="1920" height="1080" fill="url(#bg)"/>
+  <rect width="1920" height="1080" fill="url(#nebulaA)"/>
+  <rect width="1920" height="1080" fill="url(#nebulaB)"/>
+  <g fill="#effcff" opacity=".84">
+    <circle cx="118" cy="108" r="1.8"/><circle cx="320" cy="90" r="2.2"/><circle cx="498" cy="164" r="1.4"/><circle cx="704" cy="103" r="1.9"/>
+    <circle cx="920" cy="152" r="2.1"/><circle cx="1107" cy="95" r="1.5"/><circle cx="1326" cy="170" r="2.3"/><circle cx="1518" cy="116" r="1.6"/>
+    <circle cx="1711" cy="181" r="2.2"/><circle cx="1839" cy="129" r="1.7"/><circle cx="156" cy="296" r="1.5"/><circle cx="344" cy="344" r="2"/>
+    <circle cx="551" cy="270" r="1.7"/><circle cx="742" cy="322" r="2.4"/><circle cx="941" cy="286" r="1.5"/><circle cx="1134" cy="351" r="2.1"/>
+    <circle cx="1331" cy="286" r="1.8"/><circle cx="1538" cy="338" r="2.2"/><circle cx="1722" cy="277" r="1.6"/><circle cx="1829" cy="344" r="2"/>
+    <circle cx="107" cy="498" r="1.5"/><circle cx="311" cy="438" r="2.1"/><circle cx="510" cy="516" r="1.6"/><circle cx="706" cy="472" r="2.2"/>
+    <circle cx="903" cy="544" r="1.5"/><circle cx="1101" cy="476" r="2"/><circle cx="1290" cy="548" r="1.7"/><circle cx="1496" cy="491" r="2.2"/>
+    <circle cx="1684" cy="564" r="1.6"/><circle cx="1809" cy="501" r="2"/><circle cx="142" cy="704" r="1.8"/><circle cx="337" cy="648" r="2.2"/>
+    <circle cx="536" cy="734" r="1.5"/><circle cx="727" cy="668" r="2"/><circle cx="924" cy="751" r="1.7"/><circle cx="1128" cy="693" r="2.3"/>
+    <circle cx="1315" cy="761" r="1.5"/><circle cx="1509" cy="706" r="2"/><circle cx="1704" cy="778" r="1.8"/><circle cx="1831" cy="720" r="2.2"/>
+  </g>
+</svg>
