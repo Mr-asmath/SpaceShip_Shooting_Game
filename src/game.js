@@ -8,6 +8,7 @@ const STORAGE_KEYS = {
 
 const ASSET_PATHS = {
   startVideo: "design/images/video/game_start.mp4",
+  logoIntroVideo: "design/images/video/logo.mp4",
   heroEnterVideo: "design/images/video/hero_enter.mp4",
   heroStayVideo: "design/images/video/hero_stay.mp4",
   heroExplosionVideo: "design/images/video/hero_explotion.mp4",
@@ -1248,6 +1249,7 @@ class GalaxyDefender {
     this.hudSafeTop = 92;
     this.hudSafeBottom = 96;
     this.lastTime = 0;
+    this.logoIntroPlayed = false;
 
     this.elements = {
       hud: document.getElementById("hud"),
@@ -1261,6 +1263,8 @@ class GalaxyDefender {
       healthFill: document.getElementById("healthFill"),
       levelNotice: document.getElementById("levelNotice"),
       bossWarning: document.getElementById("bossWarning"),
+      logoIntroScreen: document.getElementById("logoIntroScreen"),
+      logoIntroVideo: document.getElementById("logoIntroVideo"),
       welcomeScreen: document.getElementById("welcomeScreen"),
       hangarScreen: document.getElementById("hangarScreen"),
       rulesModal: document.getElementById("rulesModal"),
@@ -1272,6 +1276,7 @@ class GalaxyDefender {
       transitionActions: document.getElementById("transitionActions"),
       playerShipVideo: document.getElementById("playerShipVideo"),
       startBackgroundVideo: document.getElementById("startBackgroundVideo"),
+      welcomeLogo: document.getElementById("welcomeLogo"),
       playerName: document.getElementById("playerName"),
       finalScore: document.getElementById("finalScore"),
       finalHigh: document.getElementById("finalHigh"),
@@ -1304,8 +1309,7 @@ class GalaxyDefender {
     this.resize();
     this.resetGameData();
     this.renderLeaderboard();
-    this.showWelcome();
-    this.applyDebugRoute();
+    if (!this.applyDebugRoute()) this.showWelcome();
     requestAnimationFrame((time) => this.loop(time));
   }
 
@@ -1439,6 +1443,8 @@ class GalaxyDefender {
 
     this.elements.transitionVideo.addEventListener("ended", () => this.finishTransition());
     this.elements.transitionVideo.addEventListener("timeupdate", () => this.handleTransitionTime());
+    this.elements.logoIntroVideo.addEventListener("ended", () => this.finishLogoIntro());
+    this.elements.logoIntroVideo.addEventListener("error", () => this.finishLogoIntro());
   }
 
   initModelViewers() {
@@ -1501,10 +1507,116 @@ class GalaxyDefender {
   }
 
   preloadMedia() {
+    this.elements.logoIntroVideo.src = ASSET_PATHS.logoIntroVideo;
+    this.elements.logoIntroVideo.load();
     this.elements.startBackgroundVideo.load();
     this.elements.playerShipVideo.src = ASSET_PATHS.heroStayVideo;
     this.elements.playerShipVideo.load();
     this.elements.transitionVideo.preload = "auto";
+    this.cleanWelcomeLogoBackground();
+  }
+
+  cleanWelcomeLogoBackground() {
+    const logo = this.elements.welcomeLogo;
+    if (!logo) return;
+
+    const source = new Image();
+    source.onload = () => {
+      const canvas = document.createElement("canvas");
+      const ctx = canvas.getContext("2d", { willReadFrequently: true });
+      if (!ctx) return;
+
+      canvas.width = source.naturalWidth || source.width;
+      canvas.height = source.naturalHeight || source.height;
+      ctx.drawImage(source, 0, 0);
+
+      const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      const data = imageData.data;
+
+      const width = canvas.width;
+      const height = canvas.height;
+      const visited = new Uint8Array(width * height);
+      const queue = new Int32Array(width * height);
+      let head = 0;
+      let tail = 0;
+
+      const isCheckerBackground = (pixelIndex) => {
+        const offset = pixelIndex * 4;
+        const r = data[offset];
+        const g = data[offset + 1];
+        const b = data[offset + 2];
+        const max = Math.max(r, g, b);
+        const min = Math.min(r, g, b);
+        const luma = 0.2126 * r + 0.7152 * g + 0.0722 * b;
+        return max - min < 32 && luma > 118;
+      };
+
+      const enqueue = (x, y) => {
+        if (x < 0 || x >= width || y < 0 || y >= height) return;
+        const pixelIndex = y * width + x;
+        if (visited[pixelIndex] || !isCheckerBackground(pixelIndex)) return;
+        visited[pixelIndex] = 1;
+        queue[tail] = pixelIndex;
+        tail += 1;
+      };
+
+      for (let x = 0; x < width; x += 1) {
+        enqueue(x, 0);
+        enqueue(x, height - 1);
+      }
+      for (let y = 0; y < height; y += 1) {
+        enqueue(0, y);
+        enqueue(width - 1, y);
+      }
+
+      while (head < tail) {
+        const pixelIndex = queue[head];
+        head += 1;
+        const x = pixelIndex % width;
+        const y = Math.floor(pixelIndex / width);
+        enqueue(x + 1, y);
+        enqueue(x - 1, y);
+        enqueue(x, y + 1);
+        enqueue(x, y - 1);
+      }
+
+      for (let pixelIndex = 0; pixelIndex < visited.length; pixelIndex += 1) {
+        if (visited[pixelIndex]) data[pixelIndex * 4 + 3] = 0;
+      }
+
+      ctx.putImageData(imageData, 0, 0);
+
+      let minX = width;
+      let minY = height;
+      let maxX = 0;
+      let maxY = 0;
+      for (let y = 0; y < height; y += 1) {
+        for (let x = 0; x < width; x += 1) {
+          if (data[(y * width + x) * 4 + 3] <= 12) continue;
+          minX = Math.min(minX, x);
+          minY = Math.min(minY, y);
+          maxX = Math.max(maxX, x);
+          maxY = Math.max(maxY, y);
+        }
+      }
+
+      if (maxX <= minX || maxY <= minY) {
+        logo.src = canvas.toDataURL("image/png");
+        return;
+      }
+
+      const padding = 10;
+      const cropX = Math.max(0, minX - padding);
+      const cropY = Math.max(0, minY - padding);
+      const cropW = Math.min(width - cropX, maxX - minX + padding * 2);
+      const cropH = Math.min(height - cropY, maxY - minY + padding * 2);
+      const cropped = document.createElement("canvas");
+      cropped.width = cropW;
+      cropped.height = cropH;
+      cropped.getContext("2d")?.drawImage(canvas, cropX, cropY, cropW, cropH, 0, 0, cropW, cropH);
+      logo.src = cropped.toDataURL("image/png");
+    };
+    source.src = logo.getAttribute("src") || logo.src;
   }
 
   resetGameData() {
@@ -1534,7 +1646,42 @@ class GalaxyDefender {
   }
 
   showWelcome() {
+    if (!this.logoIntroPlayed) {
+      this.playLogoIntro();
+      return;
+    }
+    this.showWelcomeContent();
+  }
+
+  playLogoIntro() {
+    this.state = "logoIntro";
+    this.logoIntroPlayed = true;
+    this.elements.logoIntroScreen.classList.remove("hidden");
+    this.elements.welcomeScreen.classList.add("hidden");
+    this.elements.hangarScreen.classList.add("hidden");
+    this.elements.rulesModal.classList.add("hidden");
+    this.elements.pauseScreen.classList.add("hidden");
+    this.elements.gameOverScreen.classList.add("hidden");
+    this.elements.transitionOverlay.classList.add("hidden");
+    this.elements.hud.classList.add("hidden");
+    this.elements.hudBottom.classList.add("hidden");
+    this.elements.mobileControls.classList.add("hidden");
+    this.setMobilePauseState("pause");
+    this.stopPlayerVideo();
+    this.elements.transitionVideo.pause();
+    this.elements.logoIntroVideo.currentTime = 0;
+    this.elements.logoIntroVideo.play().catch(() => this.finishLogoIntro());
+  }
+
+  finishLogoIntro() {
+    this.elements.logoIntroVideo.pause();
+    this.elements.logoIntroScreen.classList.add("hidden");
+    this.showWelcomeContent();
+  }
+
+  showWelcomeContent() {
     this.state = "welcome";
+    this.elements.logoIntroScreen.classList.add("hidden");
     this.elements.welcomeScreen.classList.remove("hidden");
     this.elements.hangarScreen.classList.add("hidden");
     this.elements.rulesModal.classList.add("hidden");
@@ -1554,6 +1701,8 @@ class GalaxyDefender {
 
   openHangar() {
     this.state = "hangar";
+    this.elements.logoIntroVideo.pause();
+    this.elements.logoIntroScreen.classList.add("hidden");
     this.elements.welcomeScreen.classList.add("hidden");
     this.elements.hangarScreen.classList.remove("hidden");
     this.elements.rulesModal.classList.add("hidden");
@@ -1575,6 +1724,8 @@ class GalaxyDefender {
   async beginMission(forceRestart = true) {
     await this.tryLockLandscape();
     this.hideRules();
+    this.elements.logoIntroVideo.pause();
+    this.elements.logoIntroScreen.classList.add("hidden");
     this.elements.welcomeScreen.classList.add("hidden");
     this.elements.hangarScreen.classList.add("hidden");
     this.elements.pauseScreen.classList.add("hidden");
@@ -1595,9 +1746,15 @@ class GalaxyDefender {
 
   applyDebugRoute() {
     const route = (window.location.hash || "").toLowerCase();
-    if (!route) return;
+    if (!route) return false;
+    this.logoIntroPlayed = true;
 
     setTimeout(() => {
+      if (route === "#welcome") {
+        this.showWelcomeContent();
+        return;
+      }
+
       if (route === "#hangar") {
         this.openHangar();
         return;
@@ -1607,10 +1764,13 @@ class GalaxyDefender {
         this.startDebugMission(route.slice(1));
       }
     }, 120);
+    return true;
   }
 
   startDebugMission(mode) {
     this.hideRules();
+    this.elements.logoIntroVideo.pause();
+    this.elements.logoIntroScreen.classList.add("hidden");
     this.elements.welcomeScreen.classList.add("hidden");
     this.elements.hangarScreen.classList.add("hidden");
     this.elements.transitionOverlay.classList.add("hidden");
@@ -1834,6 +1994,13 @@ class GalaxyDefender {
 
   resize() {
     const rect = this.canvas.getBoundingClientRect();
+    const viewportWidth = window.innerWidth || rect.width || 960;
+    const viewportHeight = window.innerHeight || rect.height || 540;
+    const screenScale = clamp(Math.min(viewportWidth / 1365, viewportHeight / 720), 0.58, 1);
+    const hudScale = clamp(Math.min(viewportWidth / 1120, viewportHeight / 640), 0.68, 1);
+    document.documentElement.style.setProperty("--real-vh", `${viewportHeight}px`);
+    document.documentElement.style.setProperty("--screen-scale", screenScale.toFixed(3));
+    document.documentElement.style.setProperty("--hud-scale", hudScale.toFixed(3));
     const dpr = Math.min(window.devicePixelRatio || 1, 2);
     this.canvas.width = Math.round(rect.width * dpr);
     this.canvas.height = Math.round(rect.height * dpr);
