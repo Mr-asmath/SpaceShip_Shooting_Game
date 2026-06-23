@@ -16,6 +16,9 @@ concurrency:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/
 
     steps:
       - name: Checkout
@@ -38,3 +41,8 @@ jobs:
           publish_dir: ./public
           publish_branch: gh-pages
           force_orphan: true
+
+      - name: Show Pages URL
+        run: |
+          echo "### GitHub Pages URL" >> "$GITHUB_STEP_SUMMARY"
+          echo "https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/" >> "$GITHUB_STEP_SUMMARY"

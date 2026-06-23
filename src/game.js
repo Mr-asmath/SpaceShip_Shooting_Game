@@ -1483,7 +1483,7 @@ class GalaxyDefender {
       cameraDistance: 3.45,
       modelScaleMultiplier: 1.04,
       modelOffsetX: 0.08,
-      modelOffsetY: -0.04,
+      modelOffsetY: 0.16,
       tint: [0.22, 0.82, 1],
     });
     this.pauseHeroViewer = new GlbModelViewer(this.elements.pauseHeroModel, {

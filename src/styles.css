@@ -260,7 +260,7 @@ canvas {
   border-top: clamp(11px, 1.4vw, 17px) solid transparent;
   border-bottom: clamp(11px, 1.4vw, 17px) solid transparent;
   border-left: clamp(19px, 2.25vw, 30px) solid #8effd6;
-  margin-left: 8px;
+  margin-left: 0;
   filter:
     drop-shadow(0 0 10px #8effd6)
     drop-shadow(0 0 24px #8effd6);
@@ -1506,21 +1506,21 @@ button.secondary {
 
 /* Mission setup art-directed layout. Kept at the end so it overrides older setup styles. */
 .hangar-panel {
-  grid-template-columns: minmax(300px, 39vw) minmax(360px, 1fr);
+  grid-template-columns: minmax(390px, 44vw) minmax(430px, 1fr);
   grid-template-rows: auto auto minmax(0, 1fr);
   grid-template-areas:
     "title name"
     "setup stage"
     "controls stage";
-  gap: clamp(12px, 2.2vh, 26px) clamp(24px, 4vw, 68px);
-  padding: clamp(22px, 4vh, 44px) clamp(26px, 4.8vw, 62px);
+  gap: clamp(16px, 2.6vh, 30px) clamp(24px, 3.6vw, 56px);
+  padding: clamp(26px, 4.4vh, 48px) clamp(32px, 4.8vw, 64px);
   align-content: center;
   overflow: hidden;
 }
 
 .mission-title-image {
   grid-area: title;
-  width: clamp(230px, 30vw, 390px);
+  width: clamp(300px, 34vw, 470px);
   height: auto;
   object-fit: contain;
   filter:
@@ -1530,19 +1530,20 @@ button.secondary {
 
 .hangar-name {
   grid-area: name;
-  justify-self: center;
-  align-self: center;
+  justify-self: end;
+  align-self: start;
   display: flex;
   align-items: center;
   gap: clamp(8px, 1vw, 14px);
-  width: min(36vw, 420px);
-  margin-right: clamp(20px, 7vw, 108px);
+  width: min(39vw, 470px);
+  margin-top: clamp(22px, 5.2vh, 58px);
+  margin-right: clamp(34px, 6.6vw, 96px);
   z-index: 4;
 }
 
 .name-pencil {
-  width: clamp(24px, 3.2vw, 46px);
-  height: clamp(24px, 3.2vw, 46px);
+  width: clamp(30px, 3.5vw, 50px);
+  height: clamp(30px, 3.5vw, 50px);
   object-fit: contain;
   filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.28));
 }
@@ -1558,7 +1559,7 @@ button.secondary {
   box-shadow: none;
   color: #ffffff;
   font-family: "Bernard MT Condensed", "Times New Roman", serif;
-  font-size: clamp(26px, 3.2vw, 46px);
+  font-size: clamp(34px, 3.8vw, 54px);
   line-height: 1;
   letter-spacing: 0.01em;
   text-shadow: 0 0 10px rgba(181, 228, 255, 0.46);
@@ -1573,9 +1574,9 @@ button.secondary {
   grid-area: setup;
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
-  gap: clamp(18px, 3.4vw, 38px);
+  gap: clamp(22px, 3.6vw, 44px);
   align-items: start;
-  max-width: 540px;
+  max-width: 620px;
 }
 
 .difficulty-field {
@@ -1588,7 +1589,7 @@ button.secondary {
 .difficulty-heading {
   color: #d7dce5;
   font-family: "Bernard MT Condensed", "Times New Roman", serif;
-  font-size: clamp(26px, 3.3vw, 42px);
+  font-size: clamp(32px, 3.8vw, 52px);
   line-height: 1.05;
   text-decoration: underline;
   text-shadow:
@@ -1611,12 +1612,12 @@ button.secondary {
   background: transparent;
   box-shadow: none;
   display: grid;
-  grid-template-columns: clamp(44px, 5.2vw, 68px) auto;
+  grid-template-columns: clamp(56px, 6.2vw, 82px) auto;
   align-items: center;
   gap: clamp(6px, 1vw, 10px);
   color: #ffffff;
   font-family: "Bernard MT Condensed", "Times New Roman", serif;
-  font-size: clamp(30px, 3.9vw, 50px);
+  font-size: clamp(38px, 4.4vw, 60px);
   line-height: 0.98;
   text-align: left;
   text-transform: none;
@@ -1646,8 +1647,8 @@ button.secondary {
 }
 
 .selected-gun {
-  width: clamp(42px, 5.4vw, 72px);
-  height: clamp(20px, 2.4vw, 34px);
+  width: clamp(54px, 6.3vw, 84px);
+  height: clamp(25px, 2.9vw, 40px);
   object-fit: contain;
   opacity: 0;
   transform: translateX(-6px);
@@ -1666,7 +1667,7 @@ button.secondary {
 }
 
 .sound-image-button {
-  width: clamp(56px, 7vw, 92px);
+  width: clamp(72px, 7.8vw, 104px);
   min-height: 0;
   padding: 0;
   border: 0;
@@ -1693,7 +1694,7 @@ button.secondary {
   grid-area: controls;
   display: grid;
   gap: clamp(8px, 1.2vh, 14px);
-  width: min(100%, 460px);
+  width: min(100%, 560px);
   margin-top: clamp(2px, 1vh, 12px);
 }
 
@@ -1701,7 +1702,7 @@ button.secondary {
   margin: 0;
   color: #d8dde7;
   font-family: "Bernard MT Condensed", "Times New Roman", serif;
-  font-size: clamp(16px, 1.9vw, 25px);
+  font-size: clamp(22px, 2.4vw, 34px);
   line-height: 1.05;
   letter-spacing: 0;
   text-transform: none;
@@ -1712,8 +1713,8 @@ button.secondary {
 .control-mode-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: clamp(12px, 1.8vw, 22px);
-  padding: clamp(12px, 1.8vw, 20px);
+  gap: clamp(14px, 2vw, 24px);
+  padding: clamp(16px, 2.2vw, 24px);
   border-radius: clamp(18px, 3vw, 34px);
   background:
     radial-gradient(circle at 50% 0%, rgba(61, 94, 148, 0.2), transparent 66%),
@@ -1742,7 +1743,7 @@ button.secondary {
 }
 
 .mode-status-image {
-  width: min(100%, clamp(98px, 14vw, 172px));
+  width: min(100%, clamp(136px, 17vw, 220px));
   height: auto;
   object-fit: contain;
   transition: transform 160ms ease, filter 160ms ease;
@@ -1769,14 +1770,14 @@ button.secondary {
 .hangar-stage {
   grid-area: stage;
   position: relative;
-  min-height: clamp(320px, 62vh, 560px);
+  min-height: clamp(390px, 68vh, 620px);
   height: 100%;
   overflow: visible;
   align-self: stretch;
 }
 
 .hangar-model-canvas {
-  inset: clamp(34px, 6vh, 74px) 0 clamp(90px, 15vh, 138px);
+  inset: clamp(44px, 7vh, 84px) 0 clamp(92px, 14vh, 132px);
   width: 100%;
   height: auto;
 }
@@ -1788,14 +1789,18 @@ button.secondary {
 .stage-start-button {
   left: 50%;
   right: auto;
-  bottom: clamp(18px, 4vh, 46px);
+  bottom: clamp(24px, 4.6vh, 54px);
   transform: translateX(-50%);
 }
 
 .neon-start-button {
-  min-width: clamp(132px, 16vw, 228px);
-  min-height: clamp(58px, 9vw, 98px);
+  min-width: clamp(156px, 16vw, 228px);
+  min-height: clamp(68px, 8.4vw, 98px);
   border-radius: clamp(14px, 2.3vw, 28px);
+}
+
+.neon-start-button .play-glyph {
+  margin-left: clamp(-10px, -0.7vw, -5px);
 }
 
 .hangar-panel > .leaderboard-panel,
@@ -1805,13 +1810,13 @@ button.secondary {
 
 @media (max-width: 980px), (max-height: 620px) {
   .hangar-panel {
-    grid-template-columns: minmax(240px, 42vw) minmax(280px, 1fr);
+    grid-template-columns: minmax(320px, 44vw) minmax(330px, 1fr);
     gap: clamp(8px, 1.4vh, 16px) clamp(16px, 3vw, 34px);
     padding: clamp(14px, 3vh, 28px) clamp(18px, 4vw, 38px);
   }
 
   .mission-title-image {
-    width: clamp(190px, 28vw, 300px);
+    width: clamp(240px, 30vw, 350px);
   }
 
   .setup-grid {
@@ -1820,20 +1825,20 @@ button.secondary {
   }
 
   .difficulty-heading {
-    font-size: clamp(22px, 3vw, 34px);
+    font-size: clamp(26px, 3.4vw, 40px);
   }
 
   .difficulty-button {
-    font-size: clamp(25px, 3.4vw, 40px);
-    grid-template-columns: clamp(34px, 5vw, 54px) auto;
+    font-size: clamp(30px, 3.8vw, 46px);
+    grid-template-columns: clamp(44px, 5.4vw, 64px) auto;
   }
 
   .selected-gun {
-    width: clamp(34px, 5vw, 54px);
+    width: clamp(42px, 5.4vw, 64px);
   }
 
   .control-mode-panel {
-    width: min(100%, 390px);
+    width: min(100%, 440px);
   }
 
   .control-mode-grid {
@@ -1842,11 +1847,11 @@ button.secondary {
   }
 
   .mode-status-image {
-    width: min(100%, clamp(84px, 13vw, 134px));
+    width: min(100%, clamp(110px, 15vw, 160px));
   }
 
   .hangar-stage {
-    min-height: clamp(260px, 56vh, 420px);
+    min-height: clamp(310px, 58vh, 460px);
   }
 }
 
