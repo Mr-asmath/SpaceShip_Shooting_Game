@@ -255,11 +255,11 @@ canvas {
 .play-glyph {
   position: relative;
   z-index: 2;
-  width: 0;
-  height: 0;
-  border-top: clamp(11px, 1.4vw, 17px) solid transparent;
-  border-bottom: clamp(11px, 1.4vw, 17px) solid transparent;
-  border-left: clamp(19px, 2.25vw, 30px) solid #8effd6;
+  width: clamp(26px, 2.8vw, 40px);
+  height: clamp(29px, 3vw, 44px);
+  border: 0;
+  background: #8effd6;
+  clip-path: polygon(16% 0, 100% 50%, 16% 100%);
   margin-left: 0;
   filter:
     drop-shadow(0 0 10px #8effd6)
@@ -1890,5 +1890,237 @@ button.secondary {
 
   .hangar-model-canvas {
     inset: 0 0 62px;
+  }
+}
+
+/* Start page aside layout: left setup controls, right hero model. */
+.hangar-panel {
+  grid-template-columns: clamp(430px, 43vw, 620px) minmax(520px, 1fr);
+  grid-template-rows: 1fr;
+  grid-template-areas: "setup-aside ship-aside";
+  align-items: center;
+  gap: clamp(28px, 4vw, 72px);
+  padding: clamp(26px, 4.4vh, 48px) clamp(34px, 5vw, 70px);
+}
+
+.setup-aside {
+  grid-area: setup-aside;
+  display: grid;
+  align-content: center;
+  gap: clamp(20px, 3.3vh, 34px);
+  min-width: 0;
+  max-width: 620px;
+}
+
+.ship-aside {
+  grid-area: ship-aside;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  align-items: stretch;
+  min-width: 0;
+  min-height: clamp(520px, 78vh, 680px);
+  position: relative;
+}
+
+.setup-aside .mission-title-image {
+  grid-area: auto;
+  width: clamp(320px, 35vw, 500px);
+}
+
+.setup-aside .setup-grid {
+  grid-area: auto;
+  max-width: 100%;
+  grid-template-columns: minmax(0, 1fr) clamp(82px, 8vw, 116px);
+  gap: clamp(24px, 3vw, 44px);
+}
+
+.setup-aside .difficulty-field {
+  grid-template-columns: auto minmax(150px, 1fr);
+  column-gap: clamp(18px, 2.4vw, 32px);
+}
+
+.setup-aside .difficulty-heading {
+  font-size: clamp(46px, 5.1vw, 72px);
+  line-height: 0.96;
+  white-space: normal;
+}
+
+.setup-aside .difficulty-button {
+  grid-template-columns: clamp(68px, 7.3vw, 98px) auto;
+  font-size: clamp(44px, 5vw, 70px);
+}
+
+.setup-aside .selected-gun {
+  width: clamp(64px, 7vw, 96px);
+  height: clamp(30px, 3.3vw, 46px);
+}
+
+.setup-aside .sound-image-button {
+  width: clamp(86px, 8.6vw, 122px);
+}
+
+.setup-aside .control-mode-panel {
+  grid-area: auto;
+  width: min(100%, 600px);
+}
+
+.setup-aside .control-heading {
+  max-width: 100%;
+  font-size: clamp(30px, 3.2vw, 46px);
+  line-height: 0.94;
+}
+
+.setup-aside .control-mode-grid {
+  width: min(100%, 560px);
+  padding: clamp(18px, 2.3vw, 28px);
+  gap: clamp(18px, 2.4vw, 30px);
+}
+
+.setup-aside .mode-status-image {
+  width: min(100%, clamp(150px, 18vw, 230px));
+}
+
+.ship-aside .hangar-name {
+  grid-area: auto;
+  justify-self: center;
+  align-self: start;
+  width: min(82%, 520px);
+  margin: clamp(34px, 6vh, 58px) 0 clamp(8px, 1.4vh, 16px);
+}
+
+.ship-aside .hangar-stage {
+  grid-area: auto;
+  min-height: 0;
+  height: 100%;
+  align-self: stretch;
+  display: grid;
+  place-items: center;
+}
+
+.ship-aside .hangar-model-canvas {
+  inset: 4% -5% 18%;
+  width: 110%;
+  height: auto;
+}
+
+.ship-aside .stage-start-button {
+  left: 50%;
+  bottom: clamp(18px, 4vh, 42px);
+  transform: translateX(-50%);
+}
+
+.ship-aside .neon-start-button .play-glyph {
+  margin-left: 0;
+  transform: none;
+}
+
+@media (max-width: 1120px), (max-height: 640px) {
+  .hangar-panel {
+    grid-template-columns: clamp(320px, 43vw, 460px) minmax(330px, 1fr);
+    gap: clamp(18px, 3vw, 38px);
+    padding: clamp(16px, 3vh, 28px) clamp(20px, 4vw, 40px);
+  }
+
+  .setup-aside {
+    gap: clamp(11px, 2vh, 20px);
+  }
+
+  .setup-aside .mission-title-image {
+    width: clamp(220px, 30vw, 340px);
+  }
+
+  .setup-aside .setup-grid {
+    grid-template-columns: minmax(0, 1fr) clamp(62px, 8vw, 90px);
+    gap: clamp(12px, 2vw, 24px);
+  }
+
+  .setup-aside .difficulty-heading {
+    font-size: clamp(30px, 4.1vw, 46px);
+  }
+
+  .setup-aside .difficulty-button {
+    grid-template-columns: clamp(44px, 5.6vw, 64px) auto;
+    font-size: clamp(30px, 4vw, 46px);
+  }
+
+  .setup-aside .selected-gun {
+    width: clamp(42px, 5.6vw, 64px);
+  }
+
+  .setup-aside .control-heading {
+    font-size: clamp(24px, 3vw, 34px);
+  }
+
+  .setup-aside .control-mode-panel,
+  .setup-aside .control-mode-grid {
+    width: min(100%, 430px);
+  }
+
+  .setup-aside .mode-status-image {
+    width: min(100%, clamp(108px, 15vw, 160px));
+  }
+
+  .ship-aside {
+    min-height: clamp(340px, 72vh, 520px);
+  }
+
+  .ship-aside .hangar-name {
+    margin-top: clamp(20px, 4vh, 38px);
+  }
+
+  .ship-aside .hangar-model-canvas {
+    inset: 0 -6% 16%;
+    width: 112%;
+  }
+}
+
+@media (max-width: 760px) {
+  .hangar-panel {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto minmax(0, 1fr);
+    grid-template-areas:
+      "setup-aside"
+      "ship-aside";
+    align-content: start;
+    gap: clamp(10px, 2vh, 16px);
+  }
+
+  .setup-aside {
+    gap: 10px;
+  }
+
+  .setup-aside .setup-grid {
+    grid-template-columns: minmax(0, 1fr) clamp(54px, 15vw, 76px);
+  }
+
+  .setup-aside .difficulty-heading {
+    font-size: clamp(25px, 7vw, 34px);
+  }
+
+  .setup-aside .difficulty-button {
+    font-size: clamp(24px, 7vw, 34px);
+  }
+
+  .setup-aside .control-mode-grid {
+    width: min(100%, 340px);
+    padding: 9px;
+  }
+
+  .setup-aside .mode-status-image {
+    width: min(100%, clamp(82px, 32vw, 120px));
+  }
+
+  .ship-aside {
+    min-height: 220px;
+  }
+
+  .ship-aside .hangar-name {
+    margin-top: 0;
+    width: min(100%, 360px);
+  }
+
+  .ship-aside .hangar-model-canvas {
+    inset: 0 0 58px;
+    width: 100%;
   }
 }
