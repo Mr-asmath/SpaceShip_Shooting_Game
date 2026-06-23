@@ -1503,3 +1503,387 @@ button.secondary {
     transform-origin: top left;
   }
 }
+
+/* Mission setup art-directed layout. Kept at the end so it overrides older setup styles. */
+.hangar-panel {
+  grid-template-columns: minmax(300px, 39vw) minmax(360px, 1fr);
+  grid-template-rows: auto auto minmax(0, 1fr);
+  grid-template-areas:
+    "title name"
+    "setup stage"
+    "controls stage";
+  gap: clamp(12px, 2.2vh, 26px) clamp(24px, 4vw, 68px);
+  padding: clamp(22px, 4vh, 44px) clamp(26px, 4.8vw, 62px);
+  align-content: center;
+  overflow: hidden;
+}
+
+.mission-title-image {
+  grid-area: title;
+  width: clamp(230px, 30vw, 390px);
+  height: auto;
+  object-fit: contain;
+  filter:
+    drop-shadow(0 0 8px rgba(131, 214, 255, 0.42))
+    drop-shadow(0 0 18px rgba(34, 112, 190, 0.32));
+}
+
+.hangar-name {
+  grid-area: name;
+  justify-self: center;
+  align-self: center;
+  display: flex;
+  align-items: center;
+  gap: clamp(8px, 1vw, 14px);
+  width: min(36vw, 420px);
+  margin-right: clamp(20px, 7vw, 108px);
+  z-index: 4;
+}
+
+.name-pencil {
+  width: clamp(24px, 3.2vw, 46px);
+  height: clamp(24px, 3.2vw, 46px);
+  object-fit: contain;
+  filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.28));
+}
+
+.hangar-name input {
+  width: 100%;
+  min-height: auto;
+  padding: 0 0 5px;
+  border: 0;
+  border-radius: 0;
+  border-bottom: 2px solid rgba(239, 246, 255, 0.92);
+  background: transparent;
+  box-shadow: none;
+  color: #ffffff;
+  font-family: "Bernard MT Condensed", "Times New Roman", serif;
+  font-size: clamp(26px, 3.2vw, 46px);
+  line-height: 1;
+  letter-spacing: 0.01em;
+  text-shadow: 0 0 10px rgba(181, 228, 255, 0.46);
+}
+
+.hangar-name input:focus {
+  border-color: #74f4ff;
+  box-shadow: 0 8px 18px -14px rgba(91, 231, 255, 0.9);
+}
+
+.setup-grid {
+  grid-area: setup;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: clamp(18px, 3.4vw, 38px);
+  align-items: start;
+  max-width: 540px;
+}
+
+.difficulty-field {
+  display: grid;
+  grid-template-columns: auto minmax(120px, 1fr);
+  column-gap: clamp(12px, 2vw, 22px);
+  align-items: start;
+}
+
+.difficulty-heading {
+  color: #d7dce5;
+  font-family: "Bernard MT Condensed", "Times New Roman", serif;
+  font-size: clamp(26px, 3.3vw, 42px);
+  line-height: 1.05;
+  text-decoration: underline;
+  text-shadow:
+    0 0 6px rgba(255, 255, 255, 0.32),
+    0 0 18px rgba(107, 178, 255, 0.22);
+}
+
+.difficulty-buttons {
+  display: grid;
+  gap: 0;
+  align-items: start;
+}
+
+.difficulty-button {
+  min-width: 0;
+  min-height: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  display: grid;
+  grid-template-columns: clamp(44px, 5.2vw, 68px) auto;
+  align-items: center;
+  gap: clamp(6px, 1vw, 10px);
+  color: #ffffff;
+  font-family: "Bernard MT Condensed", "Times New Roman", serif;
+  font-size: clamp(30px, 3.9vw, 50px);
+  line-height: 0.98;
+  text-align: left;
+  text-transform: none;
+  filter: none;
+}
+
+.difficulty-button[data-difficulty="easy"].is-active,
+.difficulty-button[data-difficulty="normal"].is-active,
+.difficulty-button[data-difficulty="hard"].is-active {
+  background: transparent;
+  box-shadow: none;
+}
+
+.difficulty-button.easy span {
+  color: #6eeeff;
+  text-shadow: 0 0 10px rgba(95, 233, 255, 0.6);
+}
+
+.difficulty-button.normal span {
+  color: #fff119;
+  text-shadow: 0 0 10px rgba(255, 219, 66, 0.55);
+}
+
+.difficulty-button.hard span {
+  color: #ff1717;
+  text-shadow: 0 0 10px rgba(255, 55, 55, 0.58);
+}
+
+.selected-gun {
+  width: clamp(42px, 5.4vw, 72px);
+  height: clamp(20px, 2.4vw, 34px);
+  object-fit: contain;
+  opacity: 0;
+  transform: translateX(-6px);
+  transition: opacity 160ms ease, transform 160ms ease;
+}
+
+.difficulty-button.is-active .selected-gun {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.sound-field {
+  display: flex;
+  align-items: start;
+  padding-top: clamp(2px, 0.6vh, 8px);
+}
+
+.sound-image-button {
+  width: clamp(56px, 7vw, 92px);
+  min-height: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+  display: grid;
+  place-items: center;
+}
+
+.sound-image-button img {
+  width: 100%;
+  height: auto;
+  object-fit: contain;
+  display: none;
+  filter: drop-shadow(0 0 10px rgba(200, 230, 255, 0.32));
+}
+
+.sound-image-button.is-on .sound-on-image,
+.sound-image-button.is-off .sound-off-image {
+  display: block;
+}
+
+.control-mode-panel {
+  grid-area: controls;
+  display: grid;
+  gap: clamp(8px, 1.2vh, 14px);
+  width: min(100%, 460px);
+  margin-top: clamp(2px, 1vh, 12px);
+}
+
+.control-heading {
+  margin: 0;
+  color: #d8dde7;
+  font-family: "Bernard MT Condensed", "Times New Roman", serif;
+  font-size: clamp(16px, 1.9vw, 25px);
+  line-height: 1.05;
+  letter-spacing: 0;
+  text-transform: none;
+  text-decoration: underline;
+  text-shadow: 0 0 8px rgba(218, 238, 255, 0.34);
+}
+
+.control-mode-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: clamp(12px, 1.8vw, 22px);
+  padding: clamp(12px, 1.8vw, 20px);
+  border-radius: clamp(18px, 3vw, 34px);
+  background:
+    radial-gradient(circle at 50% 0%, rgba(61, 94, 148, 0.2), transparent 66%),
+    rgba(15, 24, 48, 0.86);
+  border: 1px solid rgba(70, 113, 174, 0.2);
+  box-shadow: inset 0 0 22px rgba(16, 30, 60, 0.46);
+}
+
+.mode-card {
+  min-height: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+  clip-path: none;
+  display: grid;
+  justify-items: center;
+  align-content: start;
+  gap: clamp(6px, 1vh, 10px);
+}
+
+.mode-card input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.mode-status-image {
+  width: min(100%, clamp(98px, 14vw, 172px));
+  height: auto;
+  object-fit: contain;
+  transition: transform 160ms ease, filter 160ms ease;
+}
+
+.mode-card input:checked + .mode-status-image {
+  transform: translateY(-2px);
+  filter: drop-shadow(0 0 10px rgba(148, 216, 255, 0.34));
+}
+
+.mode-dot {
+  width: clamp(8px, 1vw, 12px);
+  height: clamp(8px, 1vw, 12px);
+  border-radius: 50%;
+  background: #ffffff;
+  opacity: 0;
+  box-shadow: 0 0 8px rgba(255, 255, 255, 0.62);
+}
+
+.mode-card input:checked ~ .mode-dot {
+  opacity: 1;
+}
+
+.hangar-stage {
+  grid-area: stage;
+  position: relative;
+  min-height: clamp(320px, 62vh, 560px);
+  height: 100%;
+  overflow: visible;
+  align-self: stretch;
+}
+
+.hangar-model-canvas {
+  inset: clamp(34px, 6vh, 74px) 0 clamp(90px, 15vh, 138px);
+  width: 100%;
+  height: auto;
+}
+
+.hangar-stage-note {
+  display: none;
+}
+
+.stage-start-button {
+  left: 50%;
+  right: auto;
+  bottom: clamp(18px, 4vh, 46px);
+  transform: translateX(-50%);
+}
+
+.neon-start-button {
+  min-width: clamp(132px, 16vw, 228px);
+  min-height: clamp(58px, 9vw, 98px);
+  border-radius: clamp(14px, 2.3vw, 28px);
+}
+
+.hangar-panel > .leaderboard-panel,
+.hangar-panel > .hangar-actions {
+  display: none;
+}
+
+@media (max-width: 980px), (max-height: 620px) {
+  .hangar-panel {
+    grid-template-columns: minmax(240px, 42vw) minmax(280px, 1fr);
+    gap: clamp(8px, 1.4vh, 16px) clamp(16px, 3vw, 34px);
+    padding: clamp(14px, 3vh, 28px) clamp(18px, 4vw, 38px);
+  }
+
+  .mission-title-image {
+    width: clamp(190px, 28vw, 300px);
+  }
+
+  .setup-grid {
+    max-width: 410px;
+    gap: 12px;
+  }
+
+  .difficulty-heading {
+    font-size: clamp(22px, 3vw, 34px);
+  }
+
+  .difficulty-button {
+    font-size: clamp(25px, 3.4vw, 40px);
+    grid-template-columns: clamp(34px, 5vw, 54px) auto;
+  }
+
+  .selected-gun {
+    width: clamp(34px, 5vw, 54px);
+  }
+
+  .control-mode-panel {
+    width: min(100%, 390px);
+  }
+
+  .control-mode-grid {
+    padding: 10px;
+    gap: 10px;
+  }
+
+  .mode-status-image {
+    width: min(100%, clamp(84px, 13vw, 134px));
+  }
+
+  .hangar-stage {
+    min-height: clamp(260px, 56vh, 420px);
+  }
+}
+
+@media (max-width: 760px) {
+  .hangar-panel {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto auto minmax(210px, 1fr);
+    grid-template-areas:
+      "title"
+      "name"
+      "setup"
+      "controls"
+      "stage";
+    align-content: start;
+    overflow: hidden;
+  }
+
+  .hangar-name {
+    justify-self: start;
+    width: min(100%, 360px);
+    margin-right: 0;
+  }
+
+  .setup-grid {
+    grid-template-columns: minmax(0, 1fr) auto;
+    width: min(100%, 420px);
+  }
+
+  .control-mode-panel {
+    width: min(100%, 380px);
+  }
+
+  .hangar-stage {
+    min-height: 220px;
+  }
+
+  .hangar-model-canvas {
+    inset: 0 0 62px;
+  }
+}

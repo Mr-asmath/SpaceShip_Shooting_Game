@@ -1325,7 +1325,7 @@ class GalaxyDefender {
   applySavedSetup() {
     this.elements.playerName.value = this.savedPlayerName;
     this.elements.difficultyValue.value = DIFFICULTY[this.savedDifficultyKey] ? this.savedDifficultyKey : "normal";
-    this.elements.soundToggle.textContent = `Sound: ${this.soundOn ? "On" : "Off"}`;
+    this.updateSoundButton();
     this.elements.difficultyButtons.forEach((button) => {
       button.classList.toggle("is-active", button.dataset.difficulty === this.elements.difficultyValue.value);
     });
@@ -1344,6 +1344,14 @@ class GalaxyDefender {
         playerName: this.elements.playerName.value.trim() || "Pilot",
       })
     );
+  }
+
+  updateSoundButton() {
+    const button = this.elements.soundToggle;
+    if (!button) return;
+    button.classList.toggle("is-on", this.soundOn);
+    button.classList.toggle("is-off", !this.soundOn);
+    button.setAttribute("aria-label", this.soundOn ? "Sound on" : "Sound off");
   }
 
   bindEvents() {
@@ -1394,7 +1402,7 @@ class GalaxyDefender {
     this.elements.soundToggle.addEventListener("click", () => {
       this.soundOn = !this.soundOn;
       this.audio.setEnabled(this.soundOn);
-      this.elements.soundToggle.textContent = `Sound: ${this.soundOn ? "On" : "Off"}`;
+      this.updateSoundButton();
       this.saveSettings();
     });
 
