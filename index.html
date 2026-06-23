@@ -5,7 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#050818" />
     <title>Galaxy Defender</title>
-    <link rel="stylesheet" href="src/styles.css" />
+    <link rel="icon" type="image/png" href="./design/images/logo_title.png" />
+    <link rel="apple-touch-icon" href="./design/images/logo_title.png" />
+    <link rel="stylesheet" href="./src/styles.css" />
   </head>
   <body>
     <main class="game-shell">
@@ -53,7 +55,7 @@
           <video
             id="logoIntroVideo"
             class="logo-intro-video"
-            src="design/images/video/logo.mp4"
+            src="./design/images/video/logo.mp4"
             autoplay
             muted
             playsinline
@@ -65,7 +67,7 @@
           <video
             id="startBackgroundVideo"
             class="welcome-video"
-            src="design/images/video/game_start.mp4"
+            src="./design/images/video/game_start.mp4"
             autoplay
             muted
             loop
@@ -79,7 +81,7 @@
 
             <div class="welcome-center">
               <p class="eyebrow">Galaxy Defender</p>
-              <img id="welcomeLogo" class="welcome-logo" src="design/images/logo.png" alt="Galaxy Defender" />
+              <img id="welcomeLogo" class="welcome-logo" src="./design/images/logo.png" alt="Galaxy Defender" />
               <button id="enterHangarButton" class="icon-launch" aria-label="Open mission setup">
                 <span class="play-glyph"></span>
                 <span class="pause-glyphs"><i></i><i></i></span>
@@ -95,7 +97,7 @@
         <section id="hangarScreen" class="screen hidden hangar-screen">
           <div class="hangar-panel">
             <aside class="setup-aside" aria-label="Mission setup controls">
-              <img class="mission-title-image" src="design/images/status/mission_setup.png" alt="Mission Setup" />
+              <img class="mission-title-image" src="./design/images/status/mission_setup.png" alt="Mission Setup" />
 
               <div class="setup-grid">
                 <div class="field difficulty-field">
@@ -103,15 +105,15 @@
                   <input id="difficultyValue" type="hidden" value="normal" />
                   <div id="difficultyButtons" class="difficulty-buttons" role="group" aria-label="Difficulty">
                     <button type="button" class="difficulty-button easy" data-difficulty="easy">
-                      <img class="selected-gun" src="design/images/status/select_gun.png" alt="" aria-hidden="true" />
+                      <img class="selected-gun" src="./design/images/status/select_gun.png" alt="" aria-hidden="true" />
                       <span>Easy</span>
                     </button>
                     <button type="button" class="difficulty-button normal is-active" data-difficulty="normal">
-                      <img class="selected-gun" src="design/images/status/select_gun.png" alt="" aria-hidden="true" />
+                      <img class="selected-gun" src="./design/images/status/select_gun.png" alt="" aria-hidden="true" />
                       <span>Normal</span>
                     </button>
                     <button type="button" class="difficulty-button hard" data-difficulty="hard">
-                      <img class="selected-gun" src="design/images/status/select_gun.png" alt="" aria-hidden="true" />
+                      <img class="selected-gun" src="./design/images/status/select_gun.png" alt="" aria-hidden="true" />
                       <span>Hard</span>
                     </button>
                   </div>
@@ -119,8 +121,8 @@
 
                 <div class="field sound-field">
                   <button id="soundToggle" type="button" class="sound-image-button is-on" aria-label="Sound on">
-                    <img class="sound-on-image" src="design/images/buttons/sound_on.png" alt="Sound on" />
-                    <img class="sound-off-image" src="design/images/buttons/sound_off.png" alt="Sound off" />
+                    <img class="sound-on-image" src="./design/images/buttons/sound_on.png" alt="Sound on" />
+                    <img class="sound-off-image" src="./design/images/buttons/sound_off.png" alt="Sound off" />
                   </button>
                 </div>
               </div>
@@ -130,12 +132,12 @@
                 <div class="control-mode-grid">
                   <label class="mode-card">
                     <input type="radio" name="mobileControlMode" value="buttons" checked />
-                    <img class="mode-status-image" src="design/images/buttons/control_mode_button_status.png" alt="Buttons control mode" />
+                    <img class="mode-status-image" src="./design/images/buttons/control_mode_button_status.png" alt="Buttons control mode" />
                     <span class="mode-dot" aria-hidden="true"></span>
                   </label>
                   <label class="mode-card">
                     <input type="radio" name="mobileControlMode" value="tilt" />
-                    <img class="mode-status-image" src="design/images/buttons/control_mode_tilt_status.png" alt="Tilt control mode" />
+                    <img class="mode-status-image" src="./design/images/buttons/control_mode_tilt_status.png" alt="Tilt control mode" />
                     <span class="mode-dot" aria-hidden="true"></span>
                   </label>
                 </div>
@@ -144,7 +146,7 @@
 
             <aside class="ship-aside" aria-label="Hero ship launch preview">
               <div class="hangar-name">
-                <img class="name-pencil" src="design/images/status/pencil_logo.png" alt="" aria-hidden="true" />
+                <img class="name-pencil" src="./design/images/status/pencil_logo.png" alt="" aria-hidden="true" />
                 <input id="playerName" maxlength="18" autocomplete="nickname" placeholder="Pilot" />
               </div>
 

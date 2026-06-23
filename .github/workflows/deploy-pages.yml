@@ -27,7 +27,9 @@ jobs:
           lfs: true
 
       - name: Pull Git LFS assets
-        run: git lfs pull
+        run: |
+          git lfs install
+          git lfs pull
 
       - name: Prepare static site
         run: |
@@ -38,6 +40,13 @@ jobs:
           cp -r design public/design
           if [ -d assets ]; then cp -r assets public/assets; fi
           touch public/.nojekyll
+
+      - name: Verify deployed media assets
+        run: |
+          if grep -R "version https://git-lfs.github.com/spec/v1" public/design/images/video public/design/images/3d-model; then
+            echo "Git LFS pointer files were copied instead of real media assets."
+            exit 1
+          fi
 
       - name: Deploy static site to gh-pages
         uses: peaceiris/actions-gh-pages@v4
