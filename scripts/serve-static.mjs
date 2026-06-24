@@ -46,6 +46,10 @@ const server = createServer((request, response) => {
     "Content-Type": type,
     "Cache-Control": target.endsWith("index.html") ? "no-cache" : "public, max-age=3600",
   });
+  if (request.method === "HEAD") {
+    response.end();
+    return;
+  }
   createReadStream(target).pipe(response);
 });
 

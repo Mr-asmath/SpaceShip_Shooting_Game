@@ -6,10 +6,11 @@
   "scripts": {
     "start": "node scripts/serve-static.mjs",
     "dev": "npm start",
-    "build": "node scripts/prepare-static.mjs",
+    "build": "node scripts/prepare-static.mjs && node scripts/verify-static-assets.mjs",
     "preview": "node scripts/serve-static.mjs dist 4173",
     "check": "node --check src/game.js && node --check src/core/router.js",
     "audit:assets": "node scripts/audit-assets.mjs",
+    "verify:deploy": "node scripts/verify-static-assets.mjs",
     "docker:build": "docker build -t galaxy-defender:latest .",
     "docker:run": "docker run --rm -p 8080:80 galaxy-defender:latest",
     "k8s:apply": "kubectl apply -f k8s/galaxy-defender.yaml",

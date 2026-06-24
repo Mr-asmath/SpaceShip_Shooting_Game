@@ -1,4 +1,12 @@
-.hangar-screen,
+.hangar-screen {
+  background:
+    linear-gradient(180deg, rgba(3, 6, 15, 0.38), rgba(2, 4, 10, 0.58)),
+    radial-gradient(circle at 50% 14%, rgba(43, 104, 203, 0.24), transparent 34%),
+    radial-gradient(circle at 72% 42%, rgba(30, 77, 158, 0.18), transparent 44%),
+    url("../../../design/images/Background Layer.png") center / cover no-repeat,
+    linear-gradient(180deg, rgba(3, 6, 15, 0.72), rgba(2, 4, 10, 0.84));
+}
+
 .modal-screen {
   background:
     radial-gradient(circle at 50% 14%, rgba(43, 104, 203, 0.24), transparent 34%),
@@ -47,7 +55,7 @@
 
 .setup-grid {
   position: absolute;
-  left: clamp(120px, 18vw, 246px);
+  left: clamp(0px, 0vw, 0px);
   top: clamp(106px, 17vh, 148px);
   display: grid;
   grid-template-columns: minmax(0, max-content) clamp(72px, 7vw, 100px);
@@ -132,6 +140,8 @@
 .sound-field {
   display: flex;
   align-items: start;
+  justify-content: start;
+  transform: translate(-18px, -8px);
 }
 
 .sound-image-button {
@@ -159,8 +169,8 @@
 
 .control-mode-panel {
   position: absolute;
-  left: clamp(120px, 18vw, 246px);
-  top: clamp(388px, 62vh, 470px);
+  left: clamp(72px, 11vw, 156px);
+  top: clamp(364px, 58vh, 438px);
   display: grid;
   width: min(100%, 350px);
   gap: clamp(26px, 4.5vh, 40px);
