@@ -1,0 +1,7 @@
+services:
+  galaxy-defender:
+    build: .
+    image: galaxy-defender:latest
+    ports:
+      - "8080:80"
+    restart: unless-stopped

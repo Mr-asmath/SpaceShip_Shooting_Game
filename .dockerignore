@@ -1,0 +1,16 @@
+node_modules
+dist
+.git
+.github
+*.png
+!design/**/*.png
+!design/**/*.jpg
+!design/**/*.jpeg
+!design/**/*.webp
+*.log
+.env
+tmp_*.png
+test-*.png
+welcome-*.png
+hangar-*.png
+pause-*.png

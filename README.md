@@ -14,6 +14,86 @@ This version uses the local art and video assets already in `design/images/`:
 
 ## How to run
 
+### Node / npm local run
+
+This is still a frontend-only game. `npm start` runs a local Vite static server, not a backend API.
+
+```powershell
+cd E:\Projects\program\game\SpaceShip_Shooting_Game
+npm install
+npm start
+```
+
+Then open:
+
+```text
+http://127.0.0.1:3000/
+```
+
+### Static build
+
+The build copies the game files and local media assets into `dist/`.
+
+```powershell
+npm run build
+```
+
+### Docker run
+
+Start Docker Desktop first, then run:
+
+```powershell
+npm run docker:build
+npm run docker:run
+```
+
+Then open:
+
+```text
+http://127.0.0.1:8080/
+```
+
+### Kubernetes run
+
+Build the image first and make sure your Kubernetes cluster can access `galaxy-defender:latest`.
+
+```powershell
+npm run docker:build
+npm run k8s:apply
+```
+
+The Kubernetes manifest is in `k8s/galaxy-defender.yaml` and includes:
+
+- `Deployment` with `replicas: 2`
+- `Service` on port `80`
+- `HorizontalPodAutoscaler` from 2 to 6 pods
+- readiness and liveness probes
+
+### Vercel hosting
+
+Vercel should host this as a static frontend build from `dist/`. Docker and Kubernetes are for container platforms, not Vercel runtime hosting.
+
+Files added for Vercel:
+
+- `vercel.json`
+- `.github/workflows/deploy-vercel.yml`
+
+Required GitHub secret:
+
+```text
+VERCEL_TOKEN
+```
+
+The Vercel workflow uses `npm run build`, then deploys the prebuilt static output.
+
+### Asset audit
+
+Use this to find large videos/images/models that affect loading speed:
+
+```powershell
+npm run audit:assets
+```
+
 ### Direct file open
 
 Open `index.html` in a modern browser.

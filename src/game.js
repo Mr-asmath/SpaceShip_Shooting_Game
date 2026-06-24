@@ -479,6 +479,7 @@ class GlbModelViewer {
     this.modelOffsetZ = options.modelOffsetZ ?? 0;
     this.tint = options.tint || [0.24, 0.9, 1];
     this.interactive = options.interactive ?? true;
+    this.controlElement = options.controlElement || canvas.parentElement || canvas;
     this.rotationX = 0;
     this.rotationY = 0;
     this.model = null;
@@ -549,14 +550,16 @@ class GlbModelViewer {
   }
 
   bindPointerControls() {
-    this.canvas.addEventListener("pointerdown", (event) => {
+    const target = this.controlElement;
+    target.addEventListener("pointerdown", (event) => {
+      if (event.target.closest?.("button, input, label, select, textarea")) return;
       this.dragging = true;
       this.lastPointer.x = event.clientX;
       this.lastPointer.y = event.clientY;
-      this.canvas.setPointerCapture?.(event.pointerId);
+      target.setPointerCapture?.(event.pointerId);
     });
 
-    this.canvas.addEventListener("pointermove", (event) => {
+    target.addEventListener("pointermove", (event) => {
       if (!this.dragging) return;
       const deltaX = event.clientX - this.lastPointer.x;
       const deltaY = event.clientY - this.lastPointer.y;
@@ -569,9 +572,9 @@ class GlbModelViewer {
     const stopDrag = () => {
       this.dragging = false;
     };
-    this.canvas.addEventListener("pointerup", stopDrag);
-    this.canvas.addEventListener("pointercancel", stopDrag);
-    this.canvas.addEventListener("pointerleave", stopDrag);
+    target.addEventListener("pointerup", stopDrag);
+    target.addEventListener("pointercancel", stopDrag);
+    target.addEventListener("pointerleave", stopDrag);
   }
 
   resize() {
@@ -589,10 +592,18 @@ class GlbModelViewer {
     if (!this.gl) return;
     try {
       const response = await fetch(url);
+      if (!response.ok) throw new Error(`Unable to load model: ${url}`);
       const arrayBuffer = await response.arrayBuffer();
       await this.setupModel(arrayBuffer);
-    } catch {
+      if (!this.model || !this.texture) throw new Error(`Invalid GLB model: ${url}`);
+      this.canvas.classList.add("is-model-ready");
+      this.canvas.dataset.modelError = "";
+    } catch (error) {
+      console.error(`Galaxy Defender GLB load failed for ${url}`, error);
       this.model = null;
+      this.texture = null;
+      this.canvas.classList.remove("is-model-ready");
+      this.canvas.dataset.modelError = "GLB load failed";
     }
   }
 
@@ -618,9 +629,23 @@ class GlbModelViewer {
     const gltf = JSON.parse(jsonChunk);
     const primitive = gltf.meshes[0].primitives[0];
     const positions = readAccessorData(gltf, binaryChunk, primitive.attributes.POSITION);
-    const normals = readAccessorData(gltf, binaryChunk, primitive.attributes.NORMAL);
-    const uvs = readAccessorData(gltf, binaryChunk, primitive.attributes.TEXCOORD_0);
-    const indices = primitive.indices !== undefined ? readAccessorData(gltf, binaryChunk, primitive.indices) : null;
+    const normals =
+      primitive.attributes.NORMAL !== undefined
+        ? readAccessorData(gltf, binaryChunk, primitive.attributes.NORMAL)
+        : new Float32Array(positions.length);
+    if (primitive.attributes.NORMAL === undefined) {
+      for (let i = 0; i < normals.length; i += 3) normals[i + 2] = 1;
+    }
+    const uvs =
+      primitive.attributes.TEXCOORD_0 !== undefined
+        ? readAccessorData(gltf, binaryChunk, primitive.attributes.TEXCOORD_0)
+        : new Float32Array((positions.length / 3) * 2).fill(0);
+    let indices = primitive.indices !== undefined ? readAccessorData(gltf, binaryChunk, primitive.indices) : null;
+    if (indices instanceof Uint32Array) {
+      let maxIndex = 0;
+      for (let i = 0; i < indices.length; i += 1) maxIndex = Math.max(maxIndex, indices[i]);
+      if (maxIndex <= 65535) indices = new Uint16Array(indices);
+    }
 
     const min = [Infinity, Infinity, Infinity];
     const max = [-Infinity, -Infinity, -Infinity];
@@ -667,25 +692,29 @@ class GlbModelViewer {
       gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, indices, gl.STATIC_DRAW);
     }
 
-    const imageDef = gltf.images[0];
-    const imageView = gltf.bufferViews[imageDef.bufferView];
-    const imageOffset = imageView.byteOffset || 0;
-    const imageLength = imageView.byteLength;
-    const imageBuffer = binaryChunk.slice(imageOffset, imageOffset + imageLength);
-    const blobUrl = URL.createObjectURL(new Blob([imageBuffer], { type: imageDef.mimeType }));
-    const image = new Image();
-    image.src = blobUrl;
-    await image.decode();
-    URL.revokeObjectURL(blobUrl);
-
     this.texture = gl.createTexture();
     gl.bindTexture(gl.TEXTURE_2D, this.texture);
-    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
+    const imageDef = gltf.images?.[0];
+    if (imageDef?.bufferView !== undefined) {
+      const imageView = gltf.bufferViews[imageDef.bufferView];
+      const imageOffset = imageView.byteOffset || 0;
+      const imageLength = imageView.byteLength;
+      const imageBuffer = binaryChunk.slice(imageOffset, imageOffset + imageLength);
+      const blobUrl = URL.createObjectURL(new Blob([imageBuffer], { type: imageDef.mimeType || "image/png" }));
+      const image = new Image();
+      image.src = blobUrl;
+      await image.decode();
+      URL.revokeObjectURL(blobUrl);
+      gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
+      gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, image);
+    } else {
+      const pixel = new Uint8Array([190, 230, 255, 255]);
+      gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 1, 1, 0, gl.RGBA, gl.UNSIGNED_BYTE, pixel);
+    }
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
     gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
-    gl.generateMipmap(gl.TEXTURE_2D);
   }
 
   render(time) {
@@ -1250,6 +1279,7 @@ class GalaxyDefender {
     this.hudSafeBottom = 96;
     this.lastTime = 0;
     this.logoIntroPlayed = false;
+    this.routeLock = false;
 
     this.elements = {
       hud: document.getElementById("hud"),
@@ -1356,6 +1386,7 @@ class GalaxyDefender {
 
   bindEvents() {
     window.addEventListener("resize", () => this.resize());
+    window.addEventListener("hashchange", () => this.handleRouteChange());
     window.addEventListener("keydown", (event) => this.handleKeyDown(event));
     window.addEventListener("keyup", (event) => {
       this.keys[event.code] = false;
@@ -1457,36 +1488,40 @@ class GalaxyDefender {
 
   initModelViewers() {
     this.welcomeHeroViewer = new GlbModelViewer(this.elements.welcomeHeroModel, {
-      autoRotate: 0.42,
+      autoRotate: 1.2,
       baseRotationY: -0.55,
       baseRotationX: -0.16,
-      cameraDistance: 3.32,
-      modelScaleMultiplier: 0.92,
+      cameraDistance: 3.0,
+      modelScaleMultiplier: 1.05,
       modelOffsetY: -0.02,
       tint: [0.22, 0.82, 1],
       interactive: true,
     });
     this.welcomeEnemyViewer = new GlbModelViewer(this.elements.welcomeEnemyModel, {
-      autoRotate: 0.42,
+      autoRotate: 1.2,
       baseRotationY: 2.58,
       baseRotationX: -0.16,
-      cameraDistance: 3.38,
-      modelScaleMultiplier: 0.9,
+      cameraDistance: 3.05,
+      modelScaleMultiplier: 1.02,
       modelOffsetY: -0.02,
       tint: [1, 0.42, 0.3],
       interactive: true,
     });
     this.hangarHeroViewer = new GlbModelViewer(this.elements.hangarHeroModel, {
-      autoRotate: 0.3,
+      autoRotate: 1.05,
       baseRotationY: -0.28,
       baseRotationX: -0.12,
-      cameraDistance: 4.3,
-      modelScaleMultiplier: 0.84,
-      modelOffsetX: 0.08,
-      modelOffsetY: 0.52,
+      cameraDistance: 3.35,
+      modelScaleMultiplier: 1.02,
+      modelOffsetX: 0.02,
+      modelOffsetY: 0.02,
       tint: [0.22, 0.82, 1],
+      interactive: true,
     });
-    this.pauseHeroViewer = new GlbModelViewer(this.elements.pauseHeroModel, {
+    this.pauseHeroViewer = null;
+    this.gameOverHeroViewer = null;
+
+    this.pauseHeroViewer = this.elements.pauseHeroModel ? new GlbModelViewer(this.elements.pauseHeroModel, {
       autoRotate: 0.42,
       baseRotationY: -0.36,
       baseRotationX: -0.14,
@@ -1495,8 +1530,8 @@ class GalaxyDefender {
       modelOffsetY: -0.04,
       tint: [0.22, 0.82, 1],
       interactive: true,
-    });
-    this.gameOverHeroViewer = new GlbModelViewer(this.elements.gameOverHeroModel, {
+    }) : null;
+    this.gameOverHeroViewer = this.elements.gameOverHeroModel ? new GlbModelViewer(this.elements.gameOverHeroModel, {
       autoRotate: 0.42,
       baseRotationY: -0.36,
       baseRotationX: -0.14,
@@ -1505,13 +1540,11 @@ class GalaxyDefender {
       modelOffsetY: -0.04,
       tint: [0.22, 0.82, 1],
       interactive: true,
-    });
+    }) : null;
 
     this.welcomeHeroViewer.load(ASSET_PATHS.heroModel);
     this.welcomeEnemyViewer.load(ASSET_PATHS.enemyModel);
     this.hangarHeroViewer.load(ASSET_PATHS.heroModel);
-    this.pauseHeroViewer.load(ASSET_PATHS.heroModel);
-    this.gameOverHeroViewer.load(ASSET_PATHS.heroModel);
   }
 
   preloadMedia() {
@@ -1689,6 +1722,7 @@ class GalaxyDefender {
 
   showWelcomeContent() {
     this.state = "welcome";
+    this.setRoute("welcome", true);
     this.elements.logoIntroScreen.classList.add("hidden");
     this.elements.welcomeScreen.classList.remove("hidden");
     this.elements.hangarScreen.classList.add("hidden");
@@ -1709,6 +1743,7 @@ class GalaxyDefender {
 
   openHangar() {
     this.state = "hangar";
+    this.setRoute("start");
     this.elements.logoIntroVideo.pause();
     this.elements.logoIntroScreen.classList.add("hidden");
     this.elements.welcomeScreen.classList.add("hidden");
@@ -1731,6 +1766,7 @@ class GalaxyDefender {
 
   async beginMission(forceRestart = true) {
     await this.tryLockLandscape();
+    this.setRoute("play");
     this.hideRules();
     this.elements.logoIntroVideo.pause();
     this.elements.logoIntroScreen.classList.add("hidden");
@@ -1763,7 +1799,7 @@ class GalaxyDefender {
         return;
       }
 
-      if (route === "#hangar") {
+      if (route === "#start" || route === "#hangar") {
         this.openHangar();
         return;
       }
@@ -1773,6 +1809,24 @@ class GalaxyDefender {
       }
     }, 120);
     return true;
+  }
+
+  setRoute(route, replace = false) {
+    if (!window.GalaxyRouter) return;
+    this.routeLock = true;
+    window.GalaxyRouter.set(route, replace);
+    window.setTimeout(() => {
+      this.routeLock = false;
+    }, 80);
+  }
+
+  handleRouteChange() {
+    if (this.routeLock) return;
+    const route = (window.location.hash || "").toLowerCase();
+    if (route === "#welcome") this.showWelcomeContent();
+    if (route === "#start" || route === "#hangar") this.openHangar();
+    if (route === "#pause" && this.state === "playing") this.pauseGame();
+    if (route === "#play" && this.state === "paused") this.resumeFromPause();
   }
 
   startDebugMission(mode) {
@@ -1985,6 +2039,7 @@ class GalaxyDefender {
   pauseGame() {
     if (this.state !== "playing") return;
     this.state = "paused";
+    this.setRoute("pause");
     this.elements.pauseHigh.textContent = this.formatNumber(this.highScore);
     this.elements.pauseScore.textContent = this.formatNumber(this.score);
     this.elements.pauseScreen.classList.remove("hidden");
@@ -1995,6 +2050,7 @@ class GalaxyDefender {
   resumeFromPause() {
     if (this.state !== "paused") return;
     this.state = "playing";
+    this.setRoute("play");
     this.elements.pauseScreen.classList.add("hidden");
     this.setMobilePauseState("pause");
     this.lastTime = performance.now();
@@ -2184,6 +2240,7 @@ class GalaxyDefender {
       showActionsBeforeEnd: 2,
       onEnded: () => {
         this.state = "gameOver";
+        this.setRoute("gameover");
         this.highScore = Math.max(this.highScore, this.score);
         localStorage.setItem(STORAGE_KEYS.highScore, String(this.highScore));
         this.saveLeaderboard();
