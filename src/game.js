@@ -46,6 +46,13 @@ const POWER_UPS = {
   score: { label: "Score Boost", color: "#b78cff", duration: 10000 },
 };
 
+const POWER_STATUS_IMAGES = {
+  rapid: "./design/images/status/bult_boost_status.png",
+  double: "./design/images/status/bult_boost_status.png",
+  shield: "./design/images/status/shield_boost_status.png",
+  score: "./design/images/status/fast_star_status.png",
+};
+
 const DIFFICULTY = {
   easy: { enemyRate: 0.82, enemySpeed: 0.9, enemyFire: 0.85, lives: 4, damage: 18 },
   normal: { enemyRate: 1, enemySpeed: 1, enemyFire: 1, lives: 3, damage: 24 },
@@ -974,6 +981,10 @@ class Player {
     if (this.game.keys.ArrowRight || this.game.keys.KeyD || this.game.mobileMoveRight) dx += 1;
     if (this.game.keys.ArrowUp || this.game.keys.KeyW) dy -= 1;
     if (this.game.keys.ArrowDown || this.game.keys.KeyS) dy += 1;
+    if (this.game.mobileHandleVector) {
+      dx += this.game.mobileHandleVector.x;
+      dy += this.game.mobileHandleVector.y;
+    }
 
     if (this.game.controlMode === "tilt" && Math.abs(this.game.tiltGamma) > 2) {
       dx += clamp(this.game.tiltGamma / 24, -1, 1);
@@ -1270,6 +1281,7 @@ class GalaxyDefender {
     this.pointerTarget = { x: 0, y: 0 };
     this.mobileMoveLeft = false;
     this.mobileMoveRight = false;
+    this.mobileHandleVector = { x: 0, y: 0 };
     this.tiltGamma = 0;
     this.controlMode = "buttons";
     this.state = "welcome";
@@ -1287,6 +1299,7 @@ class GalaxyDefender {
       hudHigh: document.getElementById("hudHigh"),
       hudLives: document.getElementById("hudLives"),
       hudRound: document.getElementById("hudRound"),
+      hudCoins: document.getElementById("hudCoins"),
       hudBottom: document.getElementById("hudBottom"),
       powerDock: document.getElementById("powerDock"),
       powerSummary: document.getElementById("powerSummary"),
@@ -1318,6 +1331,8 @@ class GalaxyDefender {
       dragPad: document.getElementById("dragPad"),
       buttonsModeControls: document.getElementById("buttonsModeControls"),
       tiltModeControls: document.getElementById("tiltModeControls"),
+      mobileFirePrimary: document.getElementById("mobileFirePrimary"),
+      movementHandle: document.getElementById("movementHandle"),
       mobilePause: document.getElementById("mobilePause"),
       hangarStage: document.getElementById("hangarStage"),
       welcomeHeroModel: document.getElementById("welcomeHeroModel"),
@@ -1396,6 +1411,7 @@ class GalaxyDefender {
       this.pointerActive = false;
       this.mobileMoveLeft = false;
       this.mobileMoveRight = false;
+      this.mobileHandleVector = { x: 0, y: 0 };
       this.draggingHero = false;
     });
 
@@ -1464,12 +1480,22 @@ class GalaxyDefender {
       document.getElementById("mobileFireRight"),
       document.getElementById("mobileFireCornerLeft"),
       document.getElementById("mobileFireCornerRight"),
+      this.elements.mobileFirePrimary,
     ].forEach((button) => {
+      if (!button) return;
       button.addEventListener("pointerdown", (event) => {
         event.preventDefault();
         if (this.state === "playing") this.player.shoot();
       });
     });
+
+    if (this.elements.movementHandle) {
+      this.elements.movementHandle.addEventListener("pointerdown", (event) => this.handleMovementHandle(event, true));
+      this.elements.movementHandle.addEventListener("pointermove", (event) => this.handleMovementHandle(event, true));
+      this.elements.movementHandle.addEventListener("pointerup", (event) => this.handleMovementHandle(event, false));
+      this.elements.movementHandle.addEventListener("pointercancel", (event) => this.handleMovementHandle(event, false));
+      this.elements.movementHandle.addEventListener("pointerleave", (event) => this.handleMovementHandle(event, false));
+    }
 
     this.elements.mobilePause.addEventListener("click", () => {
       if (this.state === "playing") this.pauseGame();
@@ -2036,6 +2062,38 @@ class GalaxyDefender {
     }
   }
 
+  handleMovementHandle(event, active) {
+    if (!["playing", "intro", "paused"].includes(this.state)) return;
+    event.preventDefault();
+
+    if (!active) {
+      this.mobileHandleVector = { x: 0, y: 0 };
+      return;
+    }
+
+    if (event.currentTarget.setPointerCapture && event.type === "pointerdown") {
+      event.currentTarget.setPointerCapture(event.pointerId);
+    }
+
+    const rect = event.currentTarget.getBoundingClientRect();
+    const centerX = rect.left + rect.width / 2;
+    const centerY = rect.top + rect.height / 2;
+    const radius = Math.max(Math.min(rect.width, rect.height) * 0.36, 1);
+    let x = clamp((event.clientX - centerX) / radius, -1, 1);
+    let y = clamp((event.clientY - centerY) / radius, -1, 1);
+    const length = Math.hypot(x, y);
+
+    if (length < 0.12) {
+      x = 0;
+      y = 0;
+    } else if (length > 1) {
+      x /= length;
+      y /= length;
+    }
+
+    this.mobileHandleVector = { x, y };
+  }
+
   pauseGame() {
     if (this.state !== "playing") return;
     this.state = "paused";
@@ -2280,6 +2338,7 @@ class GalaxyDefender {
     this.elements.hudHigh.textContent = this.formatNumber(this.highScore);
     this.elements.hudLives.textContent = this.formatNumber(this.lives);
     this.elements.hudRound.textContent = this.formatNumber(this.round);
+    if (this.elements.hudCoins) this.elements.hudCoins.textContent = this.formatNumber(Math.floor(this.score / 10));
     this.elements.healthFill.style.width = `${clamp(this.player.health / this.player.maxHealth, 0, 1) * 100}%`;
     this.renderPowerDock();
   }
@@ -2322,7 +2381,7 @@ class GalaxyDefender {
 
   getActivePowerEntries() {
     return Object.entries(this.activePowerUps)
-      .filter(([key, value]) => POWER_UPS[key] && value > 0)
+      .filter(([key, value]) => POWER_UPS[key] && POWER_STATUS_IMAGES[key] && value > 0)
       .map(([key, value]) => ({
         key,
         value,
@@ -2336,11 +2395,9 @@ class GalaxyDefender {
     this.elements.powerDock.innerHTML = "";
 
     if (!activeEntries.length) {
-      this.elements.powerSummary.textContent = "Active (None)";
+      this.elements.powerSummary.textContent = "Power: Active (None)";
       return;
     }
-
-    const labelMap = { shield: "S", rapid: "R", double: "D", score: "2X", life: "+" };
 
     activeEntries.forEach((entry) => {
       const circle = document.createElement("div");
@@ -2350,20 +2407,21 @@ class GalaxyDefender {
       circle.style.setProperty("--progress", `${progress * 360}deg`);
       circle.title = POWER_UPS[entry.key].label;
 
-      const glyph = document.createElement("span");
-      glyph.className = "power-circle__glyph";
-      glyph.textContent = labelMap[entry.key] || entry.key.slice(0, 1).toUpperCase();
+      const icon = document.createElement("img");
+      icon.src = POWER_STATUS_IMAGES[entry.key];
+      icon.alt = "";
+      icon.draggable = false;
 
       const timer = document.createElement("small");
       timer.className = "power-circle__timer";
       timer.textContent = `${Math.ceil(entry.value / 1000)}s`;
 
-      circle.appendChild(glyph);
+      circle.appendChild(icon);
       circle.appendChild(timer);
       this.elements.powerDock.appendChild(circle);
     });
 
-    this.elements.powerSummary.textContent = activeEntries.map((entry) => POWER_UPS[entry.key].label).join(" / ");
+    this.elements.powerSummary.textContent = `Power: ${activeEntries.map((entry) => POWER_UPS[entry.key].label).join(" / ")}`;
   }
 
   formatNumber(value) {
@@ -2422,17 +2480,30 @@ class GalaxyDefender {
 
   drawBackground() {
     const theme = ROUND_THEMES[(this.round - 1) % ROUND_THEMES.length];
-    const gradient = this.ctx.createLinearGradient(0, 0, 0, this.height);
-    gradient.addColorStop(0, theme[0]);
-    gradient.addColorStop(0.55, theme[1]);
-    gradient.addColorStop(1, theme[2]);
-    this.ctx.fillStyle = gradient;
-    this.ctx.fillRect(0, 0, this.width, this.height);
+    const gameplayBackground = this.assets.get("background");
+
+    if (gameplayBackground) {
+      const scale = Math.max(this.width / gameplayBackground.width, this.height / gameplayBackground.height);
+      const drawWidth = gameplayBackground.width * scale;
+      const drawHeight = gameplayBackground.height * scale;
+      const drawX = (this.width - drawWidth) / 2;
+      const drawY = (this.height - drawHeight) / 2;
+      this.ctx.drawImage(gameplayBackground, drawX, drawY, drawWidth, drawHeight);
+      this.ctx.fillStyle = `${theme[0]}44`;
+      this.ctx.fillRect(0, 0, this.width, this.height);
+    } else {
+      const gradient = this.ctx.createLinearGradient(0, 0, 0, this.height);
+      gradient.addColorStop(0, theme[0]);
+      gradient.addColorStop(0.55, theme[1]);
+      gradient.addColorStop(1, theme[2]);
+      this.ctx.fillStyle = gradient;
+      this.ctx.fillRect(0, 0, this.width, this.height);
+    }
 
     const roundBackground = this.assets.get(getRoundBackgroundKey(this.round));
     if (roundBackground) {
       this.ctx.save();
-      this.ctx.globalAlpha = 0.5;
+      this.ctx.globalAlpha = gameplayBackground ? 0.28 : 0.5;
       this.ctx.drawImage(roundBackground, 0, 0, this.width, this.height);
       this.ctx.restore();
     }
