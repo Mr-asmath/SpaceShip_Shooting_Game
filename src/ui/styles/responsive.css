@@ -14,7 +14,7 @@
   }
 
   .setup-grid {
-    left: clamp(52px, 9vw, 104px);
+    left: clamp(26px, 5vw, 64px);
     top: clamp(82px, 15vh, 108px);
     grid-template-columns: minmax(0, 1fr) clamp(48px, 8vw, 68px);
     gap: clamp(12px, 2vw, 24px);
@@ -42,7 +42,7 @@
   }
 
   .control-mode-panel {
-    left: clamp(52px, 9vw, 104px);
+    left: clamp(26px, 5vw, 64px);
     top: clamp(276px, 51vh, 334px);
     gap: clamp(20px, 3.4vh, 30px);
     width: min(100%, 310px);
@@ -205,7 +205,7 @@
   }
 
   .setup-grid {
-    left: clamp(24px, 7vw, 48px);
+    left: clamp(12px, 4vw, 28px);
     top: clamp(64px, 11vh, 90px);
     grid-template-columns: minmax(0, 1fr) clamp(48px, 13vw, 68px);
   }
@@ -223,7 +223,7 @@
   }
 
   .control-mode-panel {
-    left: clamp(24px, 7vw, 48px);
+    left: clamp(12px, 4vw, 28px);
     top: clamp(230px, 41vh, 278px);
     gap: clamp(16px, 2.8vh, 24px);
     width: min(100%, 280px);

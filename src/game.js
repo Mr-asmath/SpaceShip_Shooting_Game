@@ -1406,7 +1406,7 @@ class GalaxyDefender {
     document.getElementById("confirmRulesButton").addEventListener("click", () => this.beginMission());
     document.getElementById("resumeButton").addEventListener("click", () => this.resumeFromPause());
     document.getElementById("pauseRestartButton").addEventListener("click", () => this.beginMission(true));
-    document.getElementById("pauseQuitButton").addEventListener("click", () => this.showWelcome());
+    document.getElementById("pauseQuitButton").addEventListener("click", () => this.openHangar());
     document.getElementById("restartButton").addEventListener("click", () => this.beginMission(true));
     document.getElementById("gameOverMenuButton").addEventListener("click", () => this.showWelcome());
     document.getElementById("retryAfterVideoButton").addEventListener("click", () => this.beginMission(true));

@@ -55,7 +55,7 @@
 
 .setup-grid {
   position: absolute;
-  left: clamp(0px, 0vw, 0px);
+  left: clamp(-22px, -2vw, -8px);
   top: clamp(106px, 17vh, 148px);
   display: grid;
   grid-template-columns: minmax(0, max-content) clamp(72px, 7vw, 100px);
@@ -169,7 +169,7 @@
 
 .control-mode-panel {
   position: absolute;
-  left: clamp(72px, 11vw, 156px);
+  left: clamp(38px, 6vw, 96px);
   top: clamp(364px, 58vh, 438px);
   display: grid;
   width: min(100%, 350px);
