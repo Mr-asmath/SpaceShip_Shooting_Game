@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#050818" />
+    <title>Galaxy Defender</title>
+    <link rel="icon" type="image/png" href="./design/images/logo_title.png" />
+    <link rel="apple-touch-icon" href="./design/images/logo_title.png" />
+    <link rel="stylesheet" href="./src/styles.css" />
+  </head>
+  <body>
+    <main class="game-shell">
+      <section class="game-frame" aria-label="Galaxy Defender game">
+        <canvas id="gameCanvas" width="960" height="540">
+          Your browser does not support Canvas. Please use a modern browser.
+        </canvas>
+
+        <div id="pageRoot"></div>
+      </section>
+    </main>
+
+    <script src="./src/ui/pages/play-page.js"></script>
+    <script src="./src/ui/pages/welcome-page.js"></script>
+    <script src="./src/ui/pages/start-page.js"></script>
+    <script src="./src/ui/pages/pause-page.js"></script>
+    <script src="./src/ui/pages/video-page.js"></script>
+    <script src="./src/core/router.js"></script>
+    <script src="./src/game.js"></script>
+  </body>
+</html>

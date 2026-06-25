@@ -1,0 +1,6 @@
+@import "./ui/styles/base.css";
+@import "./ui/styles/welcome.css";
+@import "./ui/styles/start.css";
+@import "./ui/styles/gameplay.css";
+@import "./ui/styles/summary.css";
+@import "./ui/styles/responsive.css";
